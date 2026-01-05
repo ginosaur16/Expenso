@@ -5,7 +5,7 @@ This is the first project I made for my Github portfolio and its purpose is to s
 
 The name of the app is **Expenso**. An expense tracker developed for iOS using Xcode with SwiftUI.
 
-<img width="1024" height="1024" alt="Expenso-iOS-Default-1024x1024@1x" src="https://github.com/user-attachments/assets/83061b1f-212a-40bd-ae9d-9fa9f7fc6ea9" />
+<img width="256" height="256" alt="Expenso-iOS-Default-1024x1024@1x" src="https://github.com/user-attachments/assets/83061b1f-212a-40bd-ae9d-9fa9f7fc6ea9" />
 
 This app will most likely only be available on iOS devices.
 
