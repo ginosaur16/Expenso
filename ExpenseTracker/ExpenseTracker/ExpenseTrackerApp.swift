@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ExpenseTrackerApp: App {
@@ -13,6 +14,8 @@ struct ExpenseTrackerApp: App {
         WindowGroup {
             IntroView()
             LoginView()
+            RegisterView()
         }
+        .modelContainer(for: User.self)
     }
 }
