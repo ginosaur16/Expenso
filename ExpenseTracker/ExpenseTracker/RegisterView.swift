@@ -14,6 +14,7 @@ struct RegisterView: View {
     }
 
     @Environment(\.modelContext) private var modelContext
+    @Query(sort: \User.username) private var users: [User]
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var username: String = ""
@@ -34,14 +35,12 @@ struct RegisterView: View {
                 VStack {
                     Spacer()
 
-                    // Title
                     Text("Create Account")
                         .font(.largeTitle.bold())
                         .foregroundStyle(.white)
                         .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
                         .padding(.bottom, 8)
 
-                    // Input fields container with glass effect
                     VStack(spacing: 12) {
                         TextField("First Name", text: $firstName)
                             .textContentType(.givenName)
@@ -87,20 +86,46 @@ struct RegisterView: View {
                     )
                     .padding(.horizontal, 20)
 
-                    // Register button with glass effect
                     Button(action: register) {
                         Text("Register")
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                            .frame(maxWidth: .infinity)
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 36)
                             .padding(.vertical, 14)
-                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .strokeBorder(Color.white.opacity(0.25), lineWidth: 1)
-                            )                }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 24)
+                            .glassEffect(.clear.interactive())
+                            .shadow(radius: 4)
+                    }
+                    .padding(.top, 15)
+                    .padding(.bottom, 15)
+
+                    List {
+                        Section("Registered Users") {
+                            ForEach(users) { user in
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("\(user.firstName) \(user.lastName)")
+                                        .font(.headline)
+                                    Text("@\(user.username)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    Text(user.email)
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.vertical, 4)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        deleteUser(user)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .frame(maxHeight: 220)
+                    .scrollContentBackground(.hidden)
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                    .padding(.horizontal, 20)
 
                     Spacer()
                 }
@@ -126,7 +151,6 @@ struct RegisterView: View {
         }
     }
     private func register() {
-        // Simple validation (optional)
         guard !firstName.isEmpty,
               !lastName.isEmpty,
               !username.isEmpty,
@@ -155,6 +179,15 @@ struct RegisterView: View {
         } catch {
             // Handle save error (show alert)
             print("Failed to save user: \(error)")
+        }
+    }
+
+    private func deleteUser(_ user: User) {
+        modelContext.delete(user)
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to delete user: \(error)")
         }
     }
 

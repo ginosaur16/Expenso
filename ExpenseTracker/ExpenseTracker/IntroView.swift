@@ -8,14 +8,9 @@
 import SwiftUI
 
 struct IntroView: View {
-    private enum NavigationTarget: Hashable {
-        case login
-    }
-    
-    @State private var navigationPath = NavigationPath()
 
     var body: some View {
-        NavigationStack(path: $navigationPath) {
+        NavigationStack {
             ZStack {
                 LinearGradient(colors: [.green, .teal], startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
@@ -26,7 +21,7 @@ struct IntroView: View {
                         .shadow(color: .black.opacity(0.75), radius: 5, x: 0, y: 3)
                     
                     Text("EXPENSO")
-                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .font(.system(size: 64, weight: .bold, design: .rounded))
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [.white, .mint],
@@ -37,7 +32,7 @@ struct IntroView: View {
                         .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
                         .overlay(
                             Text("EXPENSO")
-                                .font(.system(size: 48, weight: .bold, design: .rounded))
+                                .font(.system(size: 64, weight: .bold, design: .rounded))
                                 .foregroundColor(.white.opacity(0.25))
                                 .offset(x: 1, y: 1)
                         )
@@ -45,31 +40,19 @@ struct IntroView: View {
                     Spacer()
                         .frame(height: 32)
                     
-                    NavigationLink(value: NavigationTarget.login) {
+                    NavigationLink(destination: LoginView()
+                        .navigationBarBackButtonHidden(true)
+                    ) {
                         Text("Continue")
                             .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.gray)
                             .padding(.horizontal, 36)
                             .padding(.vertical, 14)
-                            .glassEffect()
-                            .background(
-                                Capsule()
-                                    .fill(.ultraThinMaterial)
-                                    .background(
-                                        Capsule()
-                                            .stroke(Color.white.opacity(0.3), lineWidth: 1)
-                                    )
-                                    .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 4)
-                            )
+                            .glassEffect(.clear.interactive())
+                            .shadow(radius: 8)
                     }
                 }
                 .padding(40)
-            }
-            .navigationDestination(for: NavigationTarget.self) { target in
-                switch target {
-                case .login:
-                    LoginView()
-                }
             }
         }
     }

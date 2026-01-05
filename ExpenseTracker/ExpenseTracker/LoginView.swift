@@ -19,23 +19,21 @@ struct LoginView: View {
     @State private var alertMessage: String = ""
     @State private var navigateToHome: Bool = false
     
-    var body: some View {
+var body: some View {
+    NavigationStack {
         ZStack {
             LinearGradient(colors: [.green, .teal], startPoint: .top, endPoint: .bottom)
                 .ignoresSafeArea()
             
             VStack(spacing: 16) {
-                NavigationLink(destination: HomeView(), isActive: $navigateToHome) {
-                    EmptyView()
-                }
-                .hidden()
+                Spacer()
                 
                 Text("💸")
                     .font(.system(size: 100))
                     .shadow(color: .black.opacity(0.75), radius: 5, x: 0, y: 3)
                 
                 Text("EXPENSO")
-                    .font(.system(size: 48, weight: .bold, design: .rounded))
+                    .font(.system(size: 64, weight: .bold, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(
                             colors: [.white, .mint],
@@ -46,7 +44,7 @@ struct LoginView: View {
                     .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 2)
                     .overlay(
                         Text("EXPENSO")
-                            .font(.system(size: 48, weight: .bold, design: .rounded))
+                            .font(.system(size: 64, weight: .bold, design: .rounded))
                             .foregroundColor(.white.opacity(0.25))
                             .offset(x: 1, y: 1)
                     )
@@ -66,29 +64,35 @@ struct LoginView: View {
                 } label: {
                     Text("Login")
                         .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.gray)
                         .padding(.horizontal, 40)
                         .padding(.vertical, 14)
-                        .glassEffect()
+                        .glassEffect(.clear.interactive())
+                        .shadow(radius: 4)
                 }
-                .background(
-                    Capsule()
-                        .fill(.ultraThinMaterial)
-                        .shadow(color: .black.opacity(0.10), radius: 6, x: 0, y: 2)
-                )
                 .padding(.top, 8)
 
-                NavigationLink(destination: RegisterView()) {
-                    Text("Donut have an account?")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.9))
-                        .underline()
+                NavigationLink("Donut have an account?") {
+                    RegisterView()
                 }
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.white.opacity(0.9))
+                .underline()
                 .padding(.top, 8)
+                
+                Spacer()
             }
-            .padding(.top, 120)
-            .padding(.bottom, 40)
             .frame(maxWidth: 400)
-            .frame(maxHeight: .infinity, alignment: .center)
+            .padding()
+            
+            VStack {
+                Spacer()
+                
+                Text("Developed by Giulliano Suarez. 2026")
+                    .font(.footnote)
+                    .foregroundColor(.white.opacity(0.6))
+                    .padding(.bottom, 16)
+            }
         }
         .alert(alertTitle, isPresented: $showAlert) {
             Button("OK") {
@@ -99,6 +103,10 @@ struct LoginView: View {
         } message: {
             Text(alertMessage)
         }
+        .navigationDestination(isPresented: $navigateToHome) {
+            HomeView()
+        }
+    }
     }
     
     private func attemptLogin() {

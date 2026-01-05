@@ -13,8 +13,6 @@ struct ExpenseTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             IntroView()
-            LoginView()
-            RegisterView()
         }
         .modelContainer(for: User.self)
     }
