@@ -24,6 +24,7 @@ struct RegisterView: View {
     @State private var validationMessage: String = ""
     @State private var showSuccess: Bool = false
     @State private var showLoginAfterRegister = false
+    @FocusState private var isFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -43,6 +44,8 @@ struct RegisterView: View {
                     VStack(spacing: 12) {
                         TextField("First Name", text: $firstName)
                             .textContentType(.givenName)
+                            .focused($isFocused)
+                            .preferredColorScheme(.light)
                             .textInputAutocapitalization(.words)
                             .autocorrectionDisabled(true)
                             .padding(14)
@@ -50,6 +53,8 @@ struct RegisterView: View {
 
                         TextField("Last Name", text: $lastName)
                             .textContentType(.familyName)
+                            .focused($isFocused)
+                            .preferredColorScheme(.light)
                             .textInputAutocapitalization(.words)
                             .autocorrectionDisabled(true)
                             .padding(14)
@@ -57,6 +62,8 @@ struct RegisterView: View {
 
                         TextField("Username", text: $username)
                             .textContentType(.username)
+                            .focused($isFocused)
+                            .preferredColorScheme(.light)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled(true)
                             .padding(14)
@@ -65,6 +72,8 @@ struct RegisterView: View {
                         TextField("Email Address", text: $email)
                             .keyboardType(.emailAddress)
                             .textContentType(.emailAddress)
+                            .focused($isFocused)
+                            .preferredColorScheme(.light)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled(true)
                             .padding(14)
@@ -73,6 +82,8 @@ struct RegisterView: View {
                         SecureField("Password", text: $password)
                             .textContentType(.newPassword)
                             .textInputAutocapitalization(.never)
+                            .focused($isFocused)
+                            .preferredColorScheme(.light)
                             .autocorrectionDisabled(true)
                             .padding(14)
                             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
@@ -128,6 +139,9 @@ struct RegisterView: View {
 
                     Spacer()
                 }
+            }
+            .onTapGesture {
+                isFocused = false
             }
             .alert("Incomplete Information! ⚠️", isPresented: $showValidationError) {
                 Button("OK", role: .cancel) { }

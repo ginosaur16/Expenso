@@ -19,6 +19,7 @@ struct HomeView: View {
     @State private var expensoType: String = "Food/Drink"
     @State private var paymentMethod: String = "Cash"
     @State private var remarks: String = ""
+    @FocusState private var isFocused: Bool
 
     @Query var users: [User]
 
@@ -39,6 +40,7 @@ struct HomeView: View {
                     VStack {
                         Text("What Expenso have you made? 💸🥹")
                             .font(.largeTitle)
+                            .frame(width: 320)
                             .fontWeight(.bold)
                             .foregroundStyle(
                                 LinearGradient(
@@ -59,11 +61,15 @@ struct HomeView: View {
                                 HStack(spacing: 12) {
                                     TextField("Name of Expenso", text: $expensoName)
                                         .textFieldStyle(.roundedBorder)
+                                        .focused($isFocused)
+                                        .preferredColorScheme(.light)
                                         .frame(width: 180)
                                     Text("PHP")
                                     TextField("Cost", text: $expensoCost)
                                         .keyboardType(.decimalPad)
                                         .textFieldStyle(.roundedBorder)
+                                        .focused($isFocused)
+                                        .preferredColorScheme(.light)
                                         .frame(width: 120)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -109,6 +115,7 @@ struct HomeView: View {
 
                                 TextField("Remarks", text: $remarks, axis: .vertical)
                                     .glassEffect(in: .rect(cornerRadius: 4))
+                                    .focused($isFocused)
                                     .lineLimit(4...6)
                                     .frame(width: 325)
                                     .padding()
@@ -182,6 +189,9 @@ struct HomeView: View {
                     .glassEffect(.clear.interactive())
                     .shadow(radius: 4)
                 }
+            }
+            .onTapGesture {
+                isFocused = false
             }
             .alert("Log Out", isPresented: $showLogoutAlert) {
                 Button("Cancel", role: .cancel) {}

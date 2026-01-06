@@ -18,6 +18,7 @@ struct LoginView: View {
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
     @State private var navigateToHome: Bool = false
+    @FocusState private var isFocused: Bool
     
 var body: some View {
     NavigationStack {
@@ -51,12 +52,16 @@ var body: some View {
                 
                 TextField("Username", text: $username)
                     .textFieldStyle(.roundedBorder)
+                    .focused($isFocused)
+                    .preferredColorScheme(.light)
                     .padding(.horizontal)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
 
                 SecureField("Password", text: $password)
                     .textFieldStyle(.roundedBorder)
+                    .focused($isFocused)
+                    .preferredColorScheme(.light)
                     .padding(.horizontal)
 
                 Button {
@@ -94,6 +99,9 @@ var body: some View {
                     .padding(.bottom, 16)
             }
         }
+        .onTapGesture {
+            isFocused = false
+        }
         .alert(alertTitle, isPresented: $showAlert) {
             Button("OK") {
                 if alertTitle == "Login successfully" {
@@ -108,7 +116,7 @@ var body: some View {
                 .navigationBarBackButtonHidden(true)
         }
     }
-    }
+}
     
     private func attemptLogin() {
         // Basic validation
