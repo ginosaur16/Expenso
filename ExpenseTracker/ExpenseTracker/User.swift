@@ -10,6 +10,9 @@ final class User {
     var email: String
     var password: String
 
+    @Relationship(deleteRule: .cascade, inverse: \Expense.user)
+    var expenses: [Expense] = []
+
     init(id: UUID = UUID(),
          firstName: String,
          lastName: String,

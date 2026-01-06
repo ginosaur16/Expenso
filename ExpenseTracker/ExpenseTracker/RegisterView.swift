@@ -23,11 +23,10 @@ struct RegisterView: View {
     @State private var showValidationError: Bool = false
     @State private var validationMessage: String = ""
     @State private var showSuccess: Bool = false
-    @State private var navigateToLogin: Bool = false
-    @State private var path = NavigationPath()
+    @State private var showLoginAfterRegister = false
 
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             ZStack {
                 LinearGradient(colors: [.green, .teal], startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
@@ -137,16 +136,13 @@ struct RegisterView: View {
             }
             .alert("Registration Successful 🎉", isPresented: $showSuccess) {
                 Button("Continue") {
-                    path.append(Route.login)
+                    showLoginAfterRegister = true
                 }
             } message: {
                 Text("Your account has been created successfully.")
             }
-            .navigationDestination(for: Route.self) { route in
-                switch route {
-                case .login:
-                    LoginView()
-                }
+            .fullScreenCover(isPresented: $showLoginAfterRegister) {
+                LoginView()
             }
         }
     }

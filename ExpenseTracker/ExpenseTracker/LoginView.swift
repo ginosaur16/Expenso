@@ -88,7 +88,7 @@ var body: some View {
             VStack {
                 Spacer()
                 
-                Text("Developed by Giulliano Suarez. 2026")
+                Text("2026. Developed by Giulliano Suarez.")
                     .font(.footnote)
                     .foregroundColor(.white.opacity(0.6))
                     .padding(.bottom, 16)
@@ -105,6 +105,7 @@ var body: some View {
         }
         .navigationDestination(isPresented: $navigateToHome) {
             HomeView()
+                .navigationBarBackButtonHidden(true)
         }
     }
     }
