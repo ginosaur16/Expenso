@@ -120,6 +120,10 @@ struct RegisterView: View {
                                     Text(user.email)
                                         .font(.footnote)
                                         .foregroundColor(.secondary)
+                                    Text("ID: \(user.id.uuidString)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                        .textSelection(.enabled)
                                 }
                                 .padding(.vertical, 4)
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -160,6 +164,7 @@ struct RegisterView: View {
             }
         }
     }
+    
     private func register() {
         guard !firstName.isEmpty,
               !lastName.isEmpty,
@@ -172,6 +177,7 @@ struct RegisterView: View {
         }
 
         let newUser = User(
+            id: UUID(),
             firstName: firstName,
             lastName: lastName,
             username: username,

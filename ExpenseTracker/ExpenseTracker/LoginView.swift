@@ -20,6 +20,9 @@ struct LoginView: View {
     @State private var navigateToHome: Bool = false
     @FocusState private var isFocused: Bool
     
+    @AppStorage("currentUsername") private var currentUsername: String = ""
+    @AppStorage("currentUserID") private var currentUserID: String = ""
+    
 var body: some View {
     NavigationStack {
         ZStack {
@@ -52,6 +55,7 @@ var body: some View {
                 
                 TextField("Username", text: $username)
                     .textFieldStyle(.roundedBorder)
+                    .cornerRadius(16)
                     .focused($isFocused)
                     .preferredColorScheme(.light)
                     .padding(.horizontal)
@@ -60,6 +64,7 @@ var body: some View {
 
                 SecureField("Password", text: $password)
                     .textFieldStyle(.roundedBorder)
+                    .cornerRadius(16)
                     .focused($isFocused)
                     .preferredColorScheme(.light)
                     .padding(.horizontal)
@@ -106,6 +111,7 @@ var body: some View {
             Button("OK") {
                 if alertTitle == "Login successfully" {
                     navigateToHome = true
+                    isFocused = false
                 }
             }
         } message: {
@@ -134,6 +140,8 @@ var body: some View {
         do {
             let results = try modelContext.fetch(descriptor)
             if let user = results.first, user.password == password {
+                currentUsername = user.username
+                currentUserID = user.id.uuidString
                 alertTitle = "Login successfully"
                 alertMessage = "Welcome back, \(user.firstName)!"
                 showAlert = true
