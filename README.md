@@ -13,8 +13,13 @@ This app will most likely only be available on iOS devices.
 
 Why an **Expense Tracker**?
 - I primarily thought of developing one as I am keen on keeping personal financial stability in my life and also want others to try to keep track with their expenses given how much of the economy has changed over the years. Hopefully some people see the importance of this and do the same to achieve financial stability.
-- It is definitely an app that can be helpful for people who are having difficulties with tracking their expenses.
 
+- It is definitely an app that can be helpful for people who are having difficulties with tracking their expenses.
 
 The repository will serve as my development process for this app. 
 
+Main Features of Expenso:
+- Track Personal Expenses.
+- Export Expenses History to .csv on device.
+- Fully offline.
+- Straightforward User Interface.
