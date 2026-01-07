@@ -256,7 +256,7 @@ struct HomeView: View {
                         Picker("Payment Method", selection: $paymentMethod) {
                             Text("Cash").tag("Cash")
                             Text("Credit Card").tag("Credit Card")
-                            Text("Debit Card").tag("Debit/Cash Card")
+                            Text("Debit Card").tag("Debit Card")
                         }
                         TextField("Remarks (optional)", text: $remarks, axis: .vertical)
                     }
@@ -337,8 +337,9 @@ struct HomeView: View {
                             
                             DatePicker("Date of Expenso", selection: $expensoDate, displayedComponents: .date)
                                 .datePickerStyle(.wheel)
+                                .glassEffect(.clear)
                                 .labelsHidden()
-                                .frame(height: 80)
+                                .frame(height: 90)
                                 .clipped()
                             
                             Divider()
@@ -387,7 +388,6 @@ struct HomeView: View {
                                         .glassEffect(.clear.interactive())
                                     }
 
-
                                     VStack(alignment: .center, spacing: 4) {
                                         Text("Payment Method")
                                             .font(.caption)
@@ -396,7 +396,7 @@ struct HomeView: View {
                                         Picker("Payment Method", selection: $paymentMethod) {
                                             Text("Cash").tag("Cash")
                                             Text("Credit Card").tag("Credit Card")
-                                            Text("Debit Card").tag("Debit/Cash Card")
+                                            Text("Debit Card").tag("Debit Card")
                                         }
                                         .pickerStyle(.menu)
                                         .frame(width: 150)
@@ -414,6 +414,8 @@ struct HomeView: View {
                                     .padding()
                                     .multilineTextAlignment(.center)
                                 
+                                Spacer()
+                                    .frame(height: 20)
                                 Button("Add Expenso") {
                                     handleAddExpenso()
                                 }
@@ -422,9 +424,22 @@ struct HomeView: View {
                                 .padding(.horizontal, 36)
                                 .padding(.vertical, 14)
                                 .glassEffect(.clear.interactive())
-                                .shadow(radius: 8)
-
-                                if paymentMethod == "Credit Card" {
+                                
+                                if paymentMethod == "Credit Card" && expensoType == "Debt" {
+                                    Text("Cannot add Credit Card Payment to Debt. Please select another payment method or type.")
+                                        .font(.footnote)
+                                        .foregroundStyle(.red)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.top, 4)
+                                        .frame(maxWidth: .infinity)
+                                } else if expensoType == "Debt" {
+                                    Text("You have selected Debt, please select either Cash or Debit Card payment method.")
+                                        .font(.footnote)
+                                        .foregroundStyle(.red)
+                                        .multilineTextAlignment(.center)
+                                        .padding(.top, 4)
+                                        .frame(maxWidth: .infinity)
+                                } else if paymentMethod == "Credit Card" {
                                     Text("You have selected Credit Card Payment, this will be added in your total debt.")
                                         .font(.footnote)
                                         .foregroundStyle(.red)
@@ -432,6 +447,7 @@ struct HomeView: View {
                                         .padding(.top, 4)
                                         .frame(maxWidth: .infinity)
                                 }
+                                
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -496,6 +512,12 @@ struct HomeView: View {
                                         .font(.headline)
                                 }
                                 .padding(.horizontal)
+                                
+                                Text("Swipe Left for more options.")
+                                    .font(.footnote)
+                                    .foregroundStyle(.gray)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
 
                                 List {
                                     ForEach(expenses.filter { $0.user == currentUser }) { expense in
@@ -606,6 +628,7 @@ struct HomeView: View {
                 }
                 showAddResultAlert = true
             }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
             .onTapGesture {
                 isFocused = false
             }

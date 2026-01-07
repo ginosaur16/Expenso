@@ -55,7 +55,7 @@ struct IntroView: View {
                         )
                     
                     Spacer()
-                        .frame(height: 32)
+                        .frame(height: 64)
                     
                     NavigationLink(destination: LoginView()
                         .navigationBarBackButtonHidden(true)
@@ -63,10 +63,9 @@ struct IntroView: View {
                         Text("Continue")
                             .font(.system(size: 22, weight: .bold))
                             .foregroundColor(.gray)
-                            .padding(.horizontal, 36)
-                            .padding(.vertical, 14)
+                            .padding(.horizontal, 40)
+                            .padding(.vertical, 8)
                             .glassEffect(.clear.interactive())
-                            .shadow(radius: 8)
                     }
                 }
                 .padding(40)

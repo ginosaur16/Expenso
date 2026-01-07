@@ -76,9 +76,8 @@ var body: some View {
                         .font(.system(size: 20, weight: .bold))
                         .foregroundColor(.gray)
                         .padding(.horizontal, 40)
-                        .padding(.vertical, 14)
+                        .padding(.vertical, 8)
                         .glassEffect(.clear.interactive())
-                        .shadow(radius: 4)
                 }
                 .padding(.top, 8)
 
@@ -104,6 +103,7 @@ var body: some View {
                     .padding(.bottom, 16)
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onTapGesture {
             isFocused = false
         }

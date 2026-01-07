@@ -92,21 +92,9 @@ struct RegisterView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 20, style: .continuous)
                             .fill(.ultraThinMaterial)
-                            .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 6)
                     )
                     .padding(.horizontal, 20)
 
-                    Button(action: register) {
-                        Text("Register")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(.gray)
-                            .padding(.horizontal, 36)
-                            .padding(.vertical, 14)
-                            .glassEffect(.clear.interactive())
-                            .shadow(radius: 4)
-                    }
-                    .padding(.top, 15)
-                    .padding(.bottom, 15)
 
                     List {
                         Section("Registered Users") {
@@ -138,12 +126,31 @@ struct RegisterView: View {
                     }
                     .frame(maxHeight: 220)
                     .scrollContentBackground(.hidden)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
                     .padding(.horizontal, 20)
+                    .padding(.vertical, 20)
+                    
+                    Text("Remove User by Swiping Left.")
+                        .font(.footnote)
+                        .foregroundStyle(.gray)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                    
+                    Button(action: register) {
+                        Text("Register")
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(.gray)
+                            .padding(.horizontal, 40)
+                            .padding(.vertical, 8)
+                            .glassEffect(.clear.interactive())
+                    }
+                    .padding(.top, 15)
+                    .padding(.bottom, 15)
 
                     Spacer()
                 }
             }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
             .onTapGesture {
                 isFocused = false
             }
