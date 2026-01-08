@@ -28,11 +28,11 @@ struct HomeView: View {
     @State private var isExportingCSV: Bool = false
     @State private var csvDocument: CSVDocument = CSVDocument(data: Data())
     @State private var showPostExportHistoryActionAlert: Bool = false
-    
-    @State private var lockedTotalDebt: Decimal? = nil
+    @State private var showResetCarryoverAlert: Bool = false
     
     @AppStorage("currentUserID") private var currentUserID: String = ""
     @AppStorage("currentUsername") private var currentUsername: String = ""
+    @AppStorage("carryoverDebt") private var carryoverDebtStorage: String = "0"
     
     // Expense must conform to Identifiable for sheet(item:) usage
     @State private var expenseBeingEdited: Expense? = nil
@@ -76,6 +76,14 @@ struct HomeView: View {
         return currencyFormatter.string(from: nsNumber) ?? ""
     }
     
+    private var carryoverDebt: Decimal {
+        Decimal(string: carryoverDebtStorage) ?? 0
+    }
+
+    private func setCarryoverDebt(_ value: Decimal) {
+        carryoverDebtStorage = NSDecimalNumber(decimal: value).stringValue
+    }
+    
     private var startOfCurrentMonth: Date {
         let cal = Calendar.current
         let comps = cal.dateComponents([.year, .month], from: Date())
@@ -107,13 +115,9 @@ struct HomeView: View {
             .filter { $0.paymentMethod == "Credit Card" }
             .reduce(Decimal(0)) { $0 + $1.cost }
         let debtPaymentsTotal = userExpenses
-            .filter { $0.type == "Debt" && ($0.paymentMethod == "Cash" || $0.paymentMethod == "Debit/Cash Card") }
+            .filter { $0.type == "Debt" && ($0.paymentMethod == "Cash" || $0.paymentMethod == "Debit/Cash Card" || $0.paymentMethod == "Debit Card") }
             .reduce(Decimal(0)) { $0 + $1.cost }
-        return creditCardTotal - debtPaymentsTotal
-    }
-    
-    private var displayedTotalDebt: Decimal {
-        lockedTotalDebt ?? totalDebtForCurrentUser
+        return carryoverDebt + creditCardTotal - debtPaymentsTotal
     }
     
     private func generateCSV(for expenses: [Expense]) -> String {
@@ -132,6 +136,10 @@ struct HomeView: View {
             rows.append("\(dateStr),\(name),\(type),\(pm),\(costStr),\(remarksStr)")
         }
         return rows.joined(separator: "\n")
+    }
+
+    private var isAddDisabledForDebtCC: Bool {
+        return expensoType == "Debt" && paymentMethod == "Credit Card"
     }
 
     private func handleAddExpenso() {
@@ -424,6 +432,8 @@ struct HomeView: View {
                                 .padding(.horizontal, 36)
                                 .padding(.vertical, 14)
                                 .glassEffect(.clear.interactive())
+                                .opacity(isAddDisabledForDebtCC ? 0.5 : 1.0)
+                                .disabled(isAddDisabledForDebtCC)
                                 
                                 if paymentMethod == "Credit Card" && expensoType == "Debt" {
                                     Text("Cannot add Credit Card Payment to Debt. Please select another payment method or type.")
@@ -508,7 +518,7 @@ struct HomeView: View {
                                     Text("Total Debt:")
                                         .font(.headline)
                                     Spacer()
-                                    Text(formattedCost(displayedTotalDebt))
+                                    Text(formattedCost(totalDebtForCurrentUser))
                                         .font(.headline)
                                 }
                                 .padding(.horizontal)
@@ -576,6 +586,61 @@ struct HomeView: View {
                             .multilineTextAlignment(.center)
                             .font(.title3)
                             .padding()
+                        
+                        VStack(spacing: 12) {
+                            Text("Debt Transparency")
+                                .font(.headline)
+
+                            // Carryover display
+                            HStack {
+                                Text("Carryover Debt:")
+                                Spacer()
+                                Text(formattedCost(carryoverDebt))
+                                    .fontWeight(.semibold)
+                            }
+                            .padding(.horizontal)
+
+                            // Current period components display
+                            let userExpenses = expenses.filter { $0.user == currentUser }
+                            let creditCardTotal = userExpenses
+                                .filter { $0.paymentMethod == "Credit Card" }
+                                .reduce(Decimal(0)) { $0 + $1.cost }
+                            let debtPaymentsTotal = userExpenses
+                                .filter { $0.type == "Debt" && ($0.paymentMethod == "Cash" || $0.paymentMethod == "Debit/Cash Card" || $0.paymentMethod == "Debit Card") }
+                                .reduce(Decimal(0)) { $0 + $1.cost }
+
+                            HStack {
+                                Text("New CC Charges:")
+                                Spacer()
+                                Text(formattedCost(creditCardTotal))
+                            }
+                            .padding(.horizontal)
+
+                            HStack {
+                                Text("Debt Payments:")
+                                Spacer()
+                                Text("-\(formattedCost(debtPaymentsTotal))")
+                            }
+                            .padding(.horizontal)
+
+                            Divider()
+                            HStack {
+                                Text("Total Debt:")
+                                Spacer()
+                                Text(formattedCost(carryoverDebt + creditCardTotal - debtPaymentsTotal))
+                                    .fontWeight(.bold)
+                            }
+                            .padding(.horizontal)
+
+                            Button(role: .destructive) {
+                                showResetCarryoverAlert = true
+                            } label: {
+                                Label("Reset Debt (Clear Carryover)", systemImage: "arrow.counterclockwise")
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                        .padding()
+                        
                         Spacer()
                     }
                 }
@@ -653,9 +718,7 @@ struct HomeView: View {
                     // Do nothing, keep history
                 }
                 Button("Delete All", role: .destructive) {
-                    if lockedTotalDebt == nil {
-                        lockedTotalDebt = totalDebtForCurrentUser
-                    }
+                    setCarryoverDebt(totalDebtForCurrentUser)
                     // Delete all expenses for current user
                     let userExpenses = expenses.filter { $0.user == currentUser }
                     for exp in userExpenses {
@@ -665,6 +728,14 @@ struct HomeView: View {
                 }
             } message: {
                 Text("CSV exported successfully. Do you want to keep your current history of expenses or delete all of it?")
+            }
+            .alert("Reset Carryover Debt", isPresented: $showResetCarryoverAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Reset", role: .destructive) {
+                    setCarryoverDebt(0)
+                }
+            } message: {
+                Text("This will set your Carryover Debt to 0. This does not delete any history.")
             }
             .sheet(item: $expenseBeingEdited) { expense in
                 EditExpenseSheet(
@@ -692,4 +763,3 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
-

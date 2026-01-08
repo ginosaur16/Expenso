@@ -26,6 +26,18 @@ struct RegisterView: View {
     @State private var showLoginAfterRegister = false
     @FocusState private var isFocused: Bool
 
+    private var isEmailValid: Bool {
+        // Basic check: non-empty, contains "@" and ends with .com
+        let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return false }
+        return trimmed.contains("@") && trimmed.lowercased().hasSuffix(".com")
+    }
+
+    private var isTypingEmailAndInvalid: Bool {
+        // Show hint while the email field has focus and current email is invalid
+        return isFocused && !email.isEmpty && !isEmailValid
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -78,6 +90,14 @@ struct RegisterView: View {
                             .autocorrectionDisabled(true)
                             .padding(14)
                             .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+                        if isTypingEmailAndInvalid {
+                            Text("Please enter a valid email address")
+                                .font(.footnote)
+                                .foregroundStyle(.red)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .transition(.opacity)
+                        }
 
                         SecureField("Password", text: $password)
                             .textContentType(.newPassword)
@@ -143,9 +163,11 @@ struct RegisterView: View {
                             .padding(.horizontal, 40)
                             .padding(.vertical, 8)
                             .glassEffect(.clear.interactive())
+                            .opacity(isEmailValid ? 1.0 : 0.5)
                     }
                     .padding(.top, 15)
                     .padding(.bottom, 15)
+                    .disabled(!isEmailValid)
 
                     Spacer()
                 }
@@ -177,8 +199,13 @@ struct RegisterView: View {
               !lastName.isEmpty,
               !username.isEmpty,
               !email.isEmpty,
-              !password.isEmpty else {
-            validationMessage = "Please fill in all fields!"
+              !password.isEmpty,
+              isEmailValid else {
+            if email.isEmpty || !isEmailValid {
+                validationMessage = "Please enter a valid email address that ends with .com"
+            } else {
+                validationMessage = "Please fill in all fields!"
+            }
             showValidationError = true
             return
         }
@@ -226,3 +253,4 @@ struct RegisterView: View {
 #Preview {
     RegisterView()
 }
+
