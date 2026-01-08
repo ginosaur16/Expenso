@@ -23,3 +23,7 @@ Main Features of Expenso:
 - Export Expenses History to .csv on device.
 - Fully offline.
 - Straightforward User Interface.
+
+As of January 8, 2026, the main features of the app has been fully implemented. For the next few days, I will extensively test the app with full intention of using it as an expense tracker.
+
+To also try this app out, you need Xcode and an iPhone. (You can use iPad too, probably?)
