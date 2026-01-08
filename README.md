@@ -23,6 +23,7 @@ Main Features of Expenso:
 - Export Expenses History to .csv on device.
 - Fully offline.
 - Straightforward User Interface.
+- PHP (Philippine Peso) Exclusive currency.
 
 As of January 8, 2026, the main features of the app has been fully implemented. For the next few days, I will extensively test the app with full intention of using it as an expense tracker.
 
